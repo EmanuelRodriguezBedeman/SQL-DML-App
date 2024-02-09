@@ -76,27 +76,18 @@ class MessageWindow(customtkinter.CTkToplevel):
 
 # Tables Frame
 class TablesFrame(customtkinter.CTkFrame):
-    def __init__(self, master, tables, get_columns):
+    def __init__(self, master):
         super().__init__(master)
 
-        # Buttons attributes
-        self.tables = tables
-        self.selected_table = tables[0]
-
+        # Dropdown callback function
         def selected_table(table):
-            # Saves selected table
-            self.selected_table = table
-
-            # Sends selected table to get_columns()
-            get_columns(table)
-
-            # Sets table's columns
+            # Sets entries to selected table's columns
             master.change_entries(table)
 
         label = customtkinter.CTkLabel(self, text="Choose table:", fg_color="transparent")
         label.grid(row=0, column=0, padx=20, pady=20)
 
-        optionmenu = customtkinter.CTkOptionMenu(self, values=tables, command=selected_table)
+        optionmenu = customtkinter.CTkOptionMenu(self, values=master.get_tables(), command=selected_table)
         optionmenu.grid(row=0, column=1, padx=20, pady=20)
 
 # Entries Frame
@@ -118,7 +109,6 @@ class EntryFrames(customtkinter.CTkFrame):
 
     # Obtains entries values
     def get(self):
-        print("--------------------")
         entries_content = {}
         for label, entry in zip(self.labels, self.entries):
             entries_content[label] = entry.get()
@@ -130,12 +120,11 @@ class EntryFrames(customtkinter.CTkFrame):
 
 # CRUD Buttons Frame
 class CrudFrame(customtkinter.CTkFrame):
-    def __init__(self, master, entries):
+    def __init__(self, master):
         super().__init__(master)
 
         # Buttons attributes
         self.texts = ["Create", "Read", "Update", "Delete"]
-        self.entries = entries
 
         # Message Window Default value
         self.msg_window = None
@@ -150,43 +139,38 @@ class CrudFrame(customtkinter.CTkFrame):
                 print("else")
                 self.msg_window.focus()  # if window exists focus it
 
-        # Entries getter
-        def getter():
-            entries = self.entries.get()
-            print(entries)
-            return entries
-
         # Create button function
-        def create():
-            getter()
+        def create_entry():
+            print(master.create_entry())
             # open_msg_window(self, text="Data Created!")
 
         # Read button function
-        def read():
-            getter()
+        def read_entry():
+            print(master.read_entry())
 
         # Update button function
-        def update():
-            getter()
+        def update_entry():
+            print(master.update_entry())
             # open_msg_window(self, text="Data Updated!")
 
         # Delete button function
-        def delete():
-            getter()
+        def delete_entry():
+            print(master.delete_entry())
             # open_msg_window(self, text="Data Deleted!")
 
         # Clear button function
-        def clear():
-            self.entries.clear()
+        def clear_entries():
+            # self.entries.clear()
+            print(master.clear_entries())
             # open_msg_window(self, text="Fields Cleared!")
 
-        functions = [create, read, update, delete]
+        functions = [create_entry, read_entry, update_entry, delete_entry]
 
         for i, (text, function) in enumerate(zip(self.texts, functions)):
             button = customtkinter.CTkButton(self, width=0.5, text=text, command=function)
             button.grid(row=0, column=i, padx=10, pady=10, sticky="ew")
 
-        clear_button = customtkinter.CTkButton(self, text="Clear Fields", command=clear)
+        clear_button = customtkinter.CTkButton(self, text="Clear Fields", command=clear_entries)
         clear_button.grid(row=1, columnspan=len(self.texts), padx=10, pady=10, sticky="ew")
 
 # Application Class
@@ -205,8 +189,11 @@ class App(customtkinter.CTk):
 
         # print(user, password)
 
+        # Tables and its columns
+        self.tables_columns = tables_columns
+
         # Tables Frame
-        self.tables = TablesFrame(self, tables=list(tables_columns.keys()), get_columns=self.get_columns)
+        self.tables = TablesFrame(self)
         self.tables.grid(row=0, column=0, padx=20, pady=(0,20), sticky="nsew")
 
         # Fields Frame
@@ -214,24 +201,49 @@ class App(customtkinter.CTk):
         self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
         # Buttons Frame
-        self.crud_buttons = CrudFrame(self, entries=self.fields)
+        self.crud_buttons = CrudFrame(self)
         self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
 
     def change_entries(self, table):
         # Destroy the current fields frame
         self.fields.destroy()
-        self.crud_buttons.destroy()
 
         # Creates a new EntryFrames with labels from the other table
         self.fields = EntryFrames(self, labels=self.get_columns(table))
         self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
-        # Creates new CRUD Buttons with the instance from new EntryFrames instance
-        self.crud_buttons = CrudFrame(self, entries=self.fields)
-        self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
+    def get_tables(self):
+        return list(self.tables_columns.keys())
 
     def get_columns(self, table):
-        return tables_columns[table]
+        return self.tables_columns[table]
+
+    # Entries getter
+    def getter(self):
+        entries = self.fields.get()
+        print(entries)
+        return entries
+
+    # Create entry button's function
+    def create_entry(self):
+        return "Entry created!"
+
+    # Read entry button's function
+    def read_entry(self):
+        self.getter()
+
+    # Update entry button function
+    def update_entry(self):
+        return "Entry updated!"
+
+    # Delete entry button's function
+    def delete_entry(self):
+        return "Entry deleted!"
+
+    # Clear button function
+    def clear_entries(self):
+        return "Entries cleared!"
+        # self.entries.clear()
 
 app = App()
 app.mainloop()
