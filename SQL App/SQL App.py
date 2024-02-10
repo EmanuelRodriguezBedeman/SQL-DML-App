@@ -1,55 +1,10 @@
 # Imports
 import customtkinter # GUI
+from CTkMessagebox import CTkMessagebox # Messages Library
 import mysql.connector # MySQL
 from collections import defaultdict # Creates Dict
 
 customtkinter.set_appearance_mode("system")  # default
-
-# Block to get the tables names and their columns
-try:
-    with mysql.connector.connect(
-        user='root',
-        password='password',
-        host='127.0.0.1',
-        database='girrafe'
-    ) as cnx:
-        cursor = cnx.cursor(buffered=True)
-
-        # Get All the tables names
-        tables_query = ("SHOW TABLES;")
-
-        # Execute query
-        cursor.execute(tables_query)
-
-        # Saves the table's names
-        tables_names = [table[0] for table in cursor]
-
-        # Empty dict with empty lists values
-        tables_columns = defaultdict(list)
-
-        # Loop to save the tables names and it's columns
-        for name in tables_names:
-            
-            # Query for each table's columns
-            query = (
-                f"""
-                SELECT `COLUMN_NAME`
-                FROM `INFORMATION_SCHEMA`.`COLUMNS`
-                WHERE `TABLE_NAME` = %s;
-                """
-            )
-
-            # Executes the query
-            cursor.execute(query, [name])
-
-            # Obtains all the rows from the query
-            columns = cursor.fetchall()
-
-            # Dict with tables names and their columns
-            tables_columns[name].extend(columns[0] for columns in columns)
-
-except mysql.connector.Error as err:
-    print(f"Error: {err}")
 
 # --------------------------------- Application -----------------------------------------
 
@@ -62,32 +17,25 @@ class Dialog(customtkinter.CTkInputDialog):
     def get_entry(self):
         return self.entry
 
-# Message Window
-class MessageWindow(customtkinter.CTkToplevel):
-    def __init__(self, master, text):
-        super().__init__()
-        self.title("Information")
-        self.geometry("250x150")
-        self.text = text
-
-        self.label = customtkinter.CTkLabel(self, text=text)
-        # self.label.pack(padx=20, pady=20)
-        self.label.place(relx = 0.5, rely = 0.5, anchor="center")
-
 # Tables Frame
 class TablesFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
+        self.selected_table = master.get_tables(0)
+
         # Dropdown callback function
         def selected_table(table):
+            self.selected_table = table
             # Sets entries to selected table's columns
             master.change_entries(table)
 
+        # Choose table label & it's position
         label = customtkinter.CTkLabel(self, text="Choose table:", fg_color="transparent")
         label.grid(row=0, column=0, padx=20, pady=20)
 
-        optionmenu = customtkinter.CTkOptionMenu(self, values=master.get_tables(), command=selected_table)
+        # Dropdown to select table & it's position
+        optionmenu = customtkinter.CTkOptionMenu(self, values=master.get_tables(""), command=selected_table)
         optionmenu.grid(row=0, column=1, padx=20, pady=20)
 
 # Entries Frame
@@ -95,7 +43,7 @@ class EntryFrames(customtkinter.CTkFrame):
     def __init__(self, master, labels):
         super().__init__(master)
 
-        # Objects attributes
+        # Labels & entries
         self.labels = labels
         self.entries = []
 
@@ -108,15 +56,22 @@ class EntryFrames(customtkinter.CTkFrame):
             self.entries.append(entry)
 
     # Obtains entries values
-    def get(self):
+    def get_entries(self):
         entries_content = {}
         for label, entry in zip(self.labels, self.entries):
             entries_content[label] = entry.get()
         return entries_content
 
-    def clear(self):
+    # Clears fields values
+    def clear_fields(self):
         for entry in self.entries:
             entry.delete(0, len(entry.get()))
+
+    # Writes text inside the fields
+    def write_fields(self, text):
+        self.clear_fields()
+        for index, entry in enumerate(self.entries):
+            entry.insert(0, text[index])
 
 # CRUD Buttons Frame
 class CrudFrame(customtkinter.CTkFrame):
@@ -160,16 +115,17 @@ class CrudFrame(customtkinter.CTkFrame):
 
         # Clear button function
         def clear_entries():
-            # self.entries.clear()
-            print(master.clear_entries())
-            # open_msg_window(self, text="Fields Cleared!")
+            master.clear_fields()
 
+        # List with functions
         functions = [create_entry, read_entry, update_entry, delete_entry]
 
+        # Creates DML buttons & their positions
         for i, (text, function) in enumerate(zip(self.texts, functions)):
             button = customtkinter.CTkButton(self, width=0.5, text=text, command=function)
             button.grid(row=0, column=i, padx=10, pady=10, sticky="ew")
 
+        # Creates Clear Button
         clear_button = customtkinter.CTkButton(self, text="Clear Fields", command=clear_entries)
         clear_button.grid(row=1, columnspan=len(self.texts), padx=10, pady=10, sticky="ew")
 
@@ -177,9 +133,8 @@ class CrudFrame(customtkinter.CTkFrame):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        customtkinter.set_default_color_theme("blue")
+        # customtkinter.set_default_color_theme("blue")
         self.title("SQL DML App")
-        # self.geometry("800x600")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -189,8 +144,55 @@ class App(customtkinter.CTk):
 
         # print(user, password)
 
-        # Tables and its columns
-        self.tables_columns = tables_columns
+        # Block to get the tables names and their columns
+
+        try:
+            
+            self.connection_params = {
+                "user":'root',
+                "password":'password',
+                "host":'127.0.0.1',
+                "database":'girrafe'
+            }
+
+            with self.establish_connection(self.connection_params) as cnx:
+                cursor = cnx.cursor(buffered=True)
+
+                # Query to obtain all tables names
+                tables_query = ("SHOW TABLES;")
+
+                # Executes query
+                cursor.execute(tables_query)
+
+                # Saves the table's names
+                tables_names = [table[0] for table in cursor]
+
+                # Empty dict with empty lists values
+                self.tables_columns = defaultdict(list)
+
+                # Loop to save the tables names and it's columns
+                for name in tables_names:
+                    
+                    # Query for each table's columns
+                    query = (
+                        f"""
+                        SELECT `COLUMN_NAME`
+                        FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                        WHERE `TABLE_NAME` = %s;
+                        """
+                    )
+
+                    # Executes the query
+                    cursor.execute(query, [name])
+
+                    # Obtains all the rows from the query
+                    columns = cursor.fetchall()
+
+                    # Dict with tables names and their columns
+                    self.tables_columns[name].extend(column[0] for column in columns)
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
         # Tables Frame
         self.tables = TablesFrame(self)
@@ -204,6 +206,11 @@ class App(customtkinter.CTk):
         self.crud_buttons = CrudFrame(self)
         self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
 
+    # Establish connection to MySQL Server (local)
+    def establish_connection(self, params):
+        return mysql.connector.connect(**params)
+    
+    # Change the entry fields based on the selected table by the dropdown
     def change_entries(self, table):
         # Destroy the current fields frame
         self.fields.destroy()
@@ -212,17 +219,14 @@ class App(customtkinter.CTk):
         self.fields = EntryFrames(self, labels=self.get_columns(table))
         self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
-    def get_tables(self):
-        return list(self.tables_columns.keys())
+    # Returns DB's tables based on index
+    def get_tables(self, index):
+        tables = list(self.tables_columns.keys())
+        return tables[index] if isinstance(index, int) else tables[:]
 
+    # Returns the given table's columns
     def get_columns(self, table):
         return self.tables_columns[table]
-
-    # Entries getter
-    def getter(self):
-        entries = self.fields.get()
-        print(entries)
-        return entries
 
     # Create entry button's function
     def create_entry(self):
@@ -230,7 +234,43 @@ class App(customtkinter.CTk):
 
     # Read entry button's function
     def read_entry(self):
-        self.getter()
+        try:
+            # Tries to connect to MySQL Server
+            with self.establish_connection(self.connection_params) as cnx:
+                cursor = cnx.cursor(buffered=True)
+            
+                entries = self.fields.get_entries()
+                table = self.tables.selected_table
+
+                for key, value in entries.items():
+                    if value:
+                        entered_entry = key
+                        break
+
+                # Gets the registry
+                registry_query = (
+                        f"""
+                        SELECT *
+                        FROM `{table}`
+                        WHERE `{entered_entry}` = %s
+                        LIMIT 1;
+                        """
+                )
+
+                # Tries to execute query
+                cursor.execute(registry_query, [entries[entered_entry]])
+
+                # Saves the entry
+                try:
+                    registry = [registry for registry in cursor][0]
+                    
+                    # Returns the registry and writes it's content into the fields 
+                    return self.fields.write_fields(registry)
+                except:
+                    CTkMessagebox(title="Error", message="Registry not found", icon="warning")
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
     # Update entry button function
     def update_entry(self):
@@ -241,9 +281,9 @@ class App(customtkinter.CTk):
         return "Entry deleted!"
 
     # Clear button function
-    def clear_entries(self):
-        return "Entries cleared!"
-        # self.entries.clear()
+    def clear_fields(self):
+        self.fields.clear_fields()
 
-app = App()
-app.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
