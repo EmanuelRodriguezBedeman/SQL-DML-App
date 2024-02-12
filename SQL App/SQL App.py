@@ -79,7 +79,7 @@ class CrudFrame(customtkinter.CTkFrame):
         super().__init__(master)
 
         # Buttons attributes
-        self.texts = ["Create", "Read", "Update", "Delete"]
+        self.texts = ["Insert", "Read", "Update", "Delete"]
 
         # Message Window Default value
         self.msg_window = None
@@ -95,8 +95,8 @@ class CrudFrame(customtkinter.CTkFrame):
                 self.msg_window.focus()  # if window exists focus it
 
         # Create button function
-        def create_entry():
-            print(master.create_entry())
+        def insert_entry():
+            print(master.insert_entry())
             # open_msg_window(self, text="Data Created!")
 
         # Read button function
@@ -118,7 +118,7 @@ class CrudFrame(customtkinter.CTkFrame):
             master.clear_fields()
 
         # List with functions
-        functions = [create_entry, read_entry, update_entry, delete_entry]
+        functions = [insert_entry, read_entry, update_entry, delete_entry]
 
         # Creates DML buttons & their positions
         for i, (text, function) in enumerate(zip(self.texts, functions)):
@@ -229,8 +229,30 @@ class App(customtkinter.CTk):
         return self.tables_columns[table]
 
     # Create entry button's function
-    def create_entry(self):
-        return "Entry created!"
+    def insert_entry(self):
+        try:
+            # Tries to connect to MySQL Server
+            with self.establish_connection(self.connection_params) as cnx:
+                cursor = cnx.cursor(buffered=True)
+            
+                entries = self.fields.get_entries()
+                table = self.tables.selected_table
+
+                # Gets the registry
+                insert_query = (f"INSERT INTO `{table}` VALUES{tuple(entries.values())};")
+
+                print(insert_query)
+
+                try:
+                    # Tries to execute query
+                    cursor.execute(insert_query)
+                    CTkMessagebox(title="Success", message="Registry sucessfully added!", icon="check", option_1="Close")
+                except Exception as error:
+                    print("Error:", error)
+                    CTkMessagebox(title="Error", message=f"Error adding registry:\n'{error}'", icon="warning")
+
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
     # Read entry button's function
     def read_entry(self):
@@ -263,11 +285,12 @@ class App(customtkinter.CTk):
                 # Saves the entry
                 try:
                     registry = [registry for registry in cursor][0]
-                    
+
                     # Returns the registry and writes it's content into the fields 
                     return self.fields.write_fields(registry)
-                except:
+                except Exception as error:
                     CTkMessagebox(title="Error", message="Registry not found", icon="warning")
+                    print(error)
 
         except mysql.connector.Error as err:
             print(f"Error: {err}")
@@ -278,7 +301,40 @@ class App(customtkinter.CTk):
 
     # Delete entry button's function
     def delete_entry(self):
-        return "Entry deleted!"
+        msg = CTkMessagebox(title="Delete", message="Do you want to destroy the current entry?", option_1="Yes", option_2="No", icon="warning")
+        if msg.get() == "Yes":
+            try:
+                # Tries to connect to MySQL Server
+                with self.establish_connection(self.connection_params) as cnx:
+                    cursor = cnx.cursor(buffered=True)
+
+                    entries = self.fields.get_entries()
+                    table = self.tables.selected_table
+                    id_field = next(iter(entries))
+
+                    if all(entries.values()):
+                        # Gets the registry
+                        delete_query = (
+                                f"""
+                                DELETE
+                                FROM `{table}`
+                                WHERE `{id_field}` = %s;
+                                """
+                        )
+
+                        try:
+                            # Tries to execute query
+                            cursor.execute(delete_query, [entries[id_field]])
+
+                            # Success Messagebox 
+                            return CTkMessagebox(title="Success", message=f"The entry on table '{table}' by id '{entries[id_field]}' was successfully deleted.", icon="check", option_1="Close")
+                        except:
+                            # Error Messagebox
+                            return CTkMessagebox(title="Error", message="ERROR! Check that all fields are filled correctly.\nRecommended: Use the Read button before delete.", icon="cancel", option_1="Close")
+                    else:
+                        return None
+            except mysql.connector.Error as err:
+                print(f"Error: {err}")
 
     # Clear button function
     def clear_fields(self):
