@@ -234,21 +234,24 @@ class App(customtkinter.CTk):
             # Tries to connect to MySQL Server
             with self.establish_connection(self.connection_params) as cnx:
                 cursor = cnx.cursor(buffered=True)
-            
+
                 entries = self.fields.get_entries()
                 table = self.tables.selected_table
 
                 # Gets the registry
                 insert_query = (f"INSERT INTO `{table}` VALUES{tuple(entries.values())};")
 
-                print(insert_query)
-
                 try:
                     # Tries to execute query
                     cursor.execute(insert_query)
+                    
+                    # Success message
                     CTkMessagebox(title="Success", message="Registry sucessfully added!", icon="check", option_1="Close")
+                    
+                    # Data is commited to the DB
+                    cnx.commit()
                 except Exception as error:
-                    print("Error:", error)
+                    # Error message
                     CTkMessagebox(title="Error", message=f"Error adding registry:\n'{error}'", icon="warning")
 
         except mysql.connector.Error as err:
