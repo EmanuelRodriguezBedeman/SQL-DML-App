@@ -248,7 +248,7 @@ class App(customtkinter.CTk):
                     # Success message
                     CTkMessagebox(title="Success", message="Registry sucessfully added!", icon="check", option_1="Close")
                     
-                    # Data is commited to the DB
+                    # Commit the transaction to make the changes permanent
                     cnx.commit()
                 except Exception as error:
                     # Error message
@@ -304,7 +304,7 @@ class App(customtkinter.CTk):
 
     # Delete entry button's function
     def delete_entry(self):
-        msg = CTkMessagebox(title="Delete", message="Do you want to destroy the current entry?", option_1="Yes", option_2="No", icon="warning")
+        msg = CTkMessagebox(title="Delete", message="Do you want to destroy the current entry?", option_1="No", option_2="Yes", icon="warning")
         if msg.get() == "Yes":
             try:
                 # Tries to connect to MySQL Server
@@ -327,7 +327,10 @@ class App(customtkinter.CTk):
 
                         try:
                             # Tries to execute query
-                            cursor.execute(delete_query, [entries[id_field]])
+                            cursor.execute(delete_query, list(entries[id_field]))
+
+                            # Commit the transaction to make the changes permanent
+                            cnx.commit()
 
                             # Success Messagebox 
                             return CTkMessagebox(title="Success", message=f"The entry on table '{table}' by id '{entries[id_field]}' was successfully deleted.", icon="check", option_1="Close")
