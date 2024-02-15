@@ -334,11 +334,11 @@ class App(customtkinter.CTk):
 
                             # Success Messagebox 
                             return CTkMessagebox(title="Success", message=f"The entry on table '{table}' by id '{entries[id_field]}' was successfully deleted.", icon="check", option_1="Close")
-                        except:
+                        except Exception as error:
                             # Error Messagebox
-                            return CTkMessagebox(title="Error", message="ERROR! Check that all fields are filled correctly.\nRecommended: Use the Read button before delete.", icon="cancel", option_1="Close")
+                            return CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
                     else:
-                        return None
+                        return CTkMessagebox(title="Error", message="ERROR! Check that all fields are filled correctly.\nRecommended: Use the Read button before delete.", icon="cancel", option_1="Close")
             except mysql.connector.Error as err:
                 print(f"Error: {err}")
 
