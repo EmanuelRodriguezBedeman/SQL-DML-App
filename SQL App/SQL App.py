@@ -300,7 +300,52 @@ class App(customtkinter.CTk):
 
     # Update entry button function
     def update_entry(self):
-        return "Entry updated!"
+        msg = CTkMessagebox(title="Delete", message="Do you want to update the current entry?", option_1="No", option_2="Yes", icon="warning")
+        if msg.get() == "Yes":
+            try:
+                # Tries to connect to MySQL Server
+                with self.establish_connection(self.connection_params) as cnx:
+                    cursor = cnx.cursor(buffered=True)
+
+                    entries = self.fields.get_entries()
+                    table = self.tables.selected_table
+                    id_field = next(iter(entries))
+
+                    if all(entries.values()):
+                        
+                        # Placeholders for each column
+                        columns_placesholders = ', '.join([f"{col} = %s" for col in entries.keys()])
+
+                        # Gets the registry
+                        update_query = (
+                                f"""
+                                UPDATE `{table}`
+                                SET {columns_placesholders}
+                                WHERE `{id_field}` = %s;
+                                """
+                        )
+
+                        # Columns values, with registry's id at the end
+                        columns_values = list(entries.values())
+                        columns_values.append(entries[id_field])
+
+                        try:
+                            # Tries to execute query
+                            cursor.execute(update_query, columns_values)
+
+                            # Commit the transaction to make the changes permanent
+                            cnx.commit()
+
+                            # Success Messagebox 
+                            return CTkMessagebox(title="Success", message=f"The entry on table '{table}' by id '{entries[id_field]}' was successfully updated.", icon="check", option_1="Close")
+                        except Exception as error:
+                            # Error Messagebox
+                            print(error)
+                            return CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
+                    else:
+                        return CTkMessagebox(title="Error", message="ERROR! Check that all fields are filled correctly.\nRecommended: Use the Read button before delete.", icon="cancel", option_1="Close")
+            except mysql.connector.Error as err:
+                print(f"Error: {err}")
 
     # Delete entry button's function
     def delete_entry(self):
