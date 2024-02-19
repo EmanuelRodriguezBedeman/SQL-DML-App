@@ -71,7 +71,10 @@ class EntryFrames(customtkinter.CTkFrame):
     def write_fields(self, text):
         self.clear_fields()
         for index, entry in enumerate(self.entries):
-            entry.insert(0, text[index])
+            if text[index] == None:
+                entry.insert(0, "")
+            else: 
+                entry.insert(0, text[index])
 
 # CRUD Buttons Frame
 class CrudFrame(customtkinter.CTkFrame):
