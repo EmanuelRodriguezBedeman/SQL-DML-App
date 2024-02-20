@@ -6,6 +6,12 @@ from collections import defaultdict # Creates Dict
 
 customtkinter.set_appearance_mode("system")  # default
 
+# -------------------------------- SQL DB Search ----------------------------------------
+
+# SHOW DATABASES LIKE 'dbname';
+
+# 
+
 # --------------------------------- Application -----------------------------------------
 
 # Input Dialogs
@@ -266,7 +272,7 @@ class App(customtkinter.CTk):
             # Tries to connect to MySQL Server
             with self.establish_connection(self.connection_params) as cnx:
                 cursor = cnx.cursor(buffered=True)
-            
+
                 entries = self.fields.get_entries()
                 table = self.tables.selected_table
 
