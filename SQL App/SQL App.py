@@ -3,14 +3,9 @@ import customtkinter # GUI
 from CTkMessagebox import CTkMessagebox # Messages Library
 import mysql.connector # MySQL
 from collections import defaultdict # Creates Dict
+from dunder_miflin_data import db_query
 
 customtkinter.set_appearance_mode("system")  # default
-
-# -------------------------------- SQL DB Search ----------------------------------------
-
-# SHOW DATABASES LIKE 'dbname';
-
-# 
 
 # --------------------------------- Application -----------------------------------------
 
@@ -147,6 +142,8 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
+        self.db_query = db_query
+
         # Input Dialogs
         # user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
         # password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
@@ -199,7 +196,6 @@ class App(customtkinter.CTk):
 
                     # Dict with tables names and their columns
                     self.tables_columns[name].extend(column[0] for column in columns)
-
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
