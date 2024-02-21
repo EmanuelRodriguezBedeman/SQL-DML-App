@@ -145,18 +145,17 @@ class App(customtkinter.CTk):
         self.db_query = db_query
 
         # Input Dialogs
-        # user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
-        # password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
+        self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
+        self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
 
-        # print(user, password)
+        print("User:", self.user, "\nPassword:", self.password)
 
         # Block to get the tables names and their columns
 
         try:
-            
             self.connection_params = {
-                "user":'root',
-                "password":'password',
+                "user":self.user,
+                "password":self.password,
                 "host":'127.0.0.1',
                 "database":'girrafe'
             }
