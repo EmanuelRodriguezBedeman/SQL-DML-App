@@ -171,11 +171,8 @@ class App(customtkinter.CTk):
             with self.establish_connection(self.connection_params) as cnx:
                 cursor = cnx.cursor(buffered=True)
 
-                # Query to obtain all tables names
-                tables_query = ("SHOW TABLES;")
-
                 # Executes query
-                cursor.execute(tables_query)
+                cursor.execute("SHOW TABLES;")
 
                 # Saves the table's names
                 tables_names = [table[0] for table in cursor]
@@ -188,7 +185,7 @@ class App(customtkinter.CTk):
                     
                     # Query for each table's columns
                     query = (
-                        f"""
+                        """
                         SELECT `COLUMN_NAME`
                         FROM `INFORMATION_SCHEMA`.`COLUMNS`
                         WHERE `TABLE_NAME` = %s;
