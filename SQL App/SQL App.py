@@ -144,19 +144,29 @@ class App(customtkinter.CTk):
 
         self.db_query = db_query
 
-        # Input Dialogs
-        self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
-        self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
+        while True:
+            # Input Dialogs
+            self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
+            self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
 
-        # Block to get the tables names and their columns
-
-        try:
             self.connection_params = {
                 "user":self.user,
                 "password":self.password,
-                "host":'127.0.0.1',
-                "database":'girrafe'
+                "host":'127.0.0.1'
             }
+
+            try:
+                with self.establish_connection(self.connection_params) as cnx:
+                    print("Hello")
+                    break
+
+            except mysql.connector.Error as error:
+                print(f"Error: {error}")
+                CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
+
+        # Block to get the tables names and their columns
+        try:
+            self.connection_params["database"] = 'girrafe'
 
             with self.establish_connection(self.connection_params) as cnx:
                 cursor = cnx.cursor(buffered=True)
