@@ -269,32 +269,33 @@ class App(customtkinter.CTk):
                 entries = self.fields.get_entries()
                 table = self.tables.selected_table
 
-                for key, value in entries.items():
-                    if value:
-                        entered_entry = key
-                        break
+                if any(entries.values()):
+                    for key, value in entries.items():
+                        if value:
+                            entered_entry = key
+                            break
 
-                # Gets the registry
-                registry_query = (
-                        f"""
-                        SELECT *
-                        FROM `{table}`
-                        WHERE `{entered_entry}` = %s
-                        LIMIT 1;
-                        """
-                )
+                    # Gets the registry
+                    registry_query = (
+                            f"""
+                            SELECT *
+                            FROM `{table}`
+                            WHERE `{entered_entry}` = %s
+                            LIMIT 1;
+                            """
+                    )
 
-                # Tries to execute query
-                cursor.execute(registry_query, [entries[entered_entry]])
+                    # Tries to execute query
+                    cursor.execute(registry_query, [entries[entered_entry]])
 
-                # Saves the entry
-                try:
-                    registry = [registry for registry in cursor][0]
+                    # Saves the entry
+                    try:
+                        registry = [registry for registry in cursor][0]
 
-                    # Returns the registry and writes it's content into the fields 
-                    return self.fields.write_fields(registry)
-                except Exception as error:
-                    CTkMessagebox(title="Error", message="Registry not found", icon="warning")
+                        # Returns the registry and writes it's content into the fields 
+                        return self.fields.write_fields(registry)
+                    except Exception as error:
+                        CTkMessagebox(title="Error", message="Registry not found", icon="warning")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
