@@ -145,17 +145,15 @@ class App(customtkinter.CTk):
         self.db_query = db_query
 
         # Input Dialogs
-        self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
-        self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
-
-        print("User:", self.user, "\nPassword:", self.password)
+        # self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
+        # self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
 
         # Block to get the tables names and their columns
 
         try:
             self.connection_params = {
-                "user":self.user,
-                "password":self.password,
+                "user":'root',
+                "password":'password',
                 "host":'127.0.0.1',
                 "database":'girrafe'
             }
@@ -271,33 +269,32 @@ class App(customtkinter.CTk):
                 entries = self.fields.get_entries()
                 table = self.tables.selected_table
 
-                if all(entries.values()):
-                    for key, value in entries.items():
-                        if value:
-                            entered_entry = key
-                            break
+                for key, value in entries.items():
+                    if value:
+                        entered_entry = key
+                        break
 
-                    # Gets the registry
-                    registry_query = (
-                            f"""
-                            SELECT *
-                            FROM `{table}`
-                            WHERE `{entered_entry}` = %s
-                            LIMIT 1;
-                            """
-                    )
+                # Gets the registry
+                registry_query = (
+                        f"""
+                        SELECT *
+                        FROM `{table}`
+                        WHERE `{entered_entry}` = %s
+                        LIMIT 1;
+                        """
+                )
 
-                    # Tries to execute query
-                    cursor.execute(registry_query, [entries[entered_entry]])
+                # Tries to execute query
+                cursor.execute(registry_query, [entries[entered_entry]])
 
-                    # Saves the entry
-                    try:
-                        registry = [registry for registry in cursor][0]
+                # Saves the entry
+                try:
+                    registry = [registry for registry in cursor][0]
 
-                        # Returns the registry and writes it's content into the fields 
-                        return self.fields.write_fields(registry)
-                    except Exception as error:
-                        CTkMessagebox(title="Error", message="Registry not found", icon="warning")
+                    # Returns the registry and writes it's content into the fields 
+                    return self.fields.write_fields(registry)
+                except Exception as error:
+                    CTkMessagebox(title="Error", message="Registry not found", icon="warning")
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
