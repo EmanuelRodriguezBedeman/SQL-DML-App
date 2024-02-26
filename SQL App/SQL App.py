@@ -385,6 +385,9 @@ class App(customtkinter.CTk):
                             # Commit the transaction to make the changes permanent
                             cnx.commit()
 
+                            # Clears the fields
+                            self.fields.clear_fields()
+
                             # Success Messagebox 
                             return CTkMessagebox(title="Success", message=f"The entry on table '{table}' by id '{entries[id_field]}' was successfully deleted.", icon="check", option_1="Close")
                         except Exception as error:
