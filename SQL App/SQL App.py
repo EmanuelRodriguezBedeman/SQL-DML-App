@@ -13,10 +13,10 @@ customtkinter.set_appearance_mode("system")  # default
 class Dialog(customtkinter.CTkInputDialog):
     def __init__(self, master, text, title):
         super().__init__(text=text, title=title)
-        self.entry = self.get_input()
+        self.input = self.get_input()
 
-    def get_entry(self):
-        return self.entry
+    def get_input(self):
+        return self.input
 
 # Tables Frame
 class TablesFrame(customtkinter.CTkFrame):
@@ -144,10 +144,11 @@ class App(customtkinter.CTk):
 
         self.db_query = db_query
 
+        # Ask for Mysql's user & password until conection is successful
         while True:
             # Input Dialogs
-            self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
-            self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
+            self.user = Dialog(self, text="Enter user:", title="MySQL User").get_input()
+            self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_input()
 
             self.connection_params = {
                 "user":self.user,
@@ -157,7 +158,6 @@ class App(customtkinter.CTk):
 
             try:
                 with self.establish_connection(self.connection_params) as cnx:
-                    print("Hello")
                     break
 
             except mysql.connector.Error as error:
