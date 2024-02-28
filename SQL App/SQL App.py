@@ -146,9 +146,17 @@ class App(customtkinter.CTk):
 
         # Ask for Mysql's user & password until conection is successful
         while True:
+            
+            self.connection_params = {}
+            
             # Input Dialogs
             self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
+            if self.user == None:
+                break
+
             self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
+            if self.password == None:
+                break
 
             self.connection_params = {
                 "user":self.user,
@@ -164,56 +172,61 @@ class App(customtkinter.CTk):
                 print(f"Error: {error}")
                 CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
 
-        # Block to get the tables names and their columns
-        try:
-            self.connection_params["database"] = 'girrafe'
+        if self.connection_params:
+            # Block to get the tables names and their columns
+            try:
+                self.connection_params["database"] = 'girrafe'
 
-            with self.establish_connection(self.connection_params) as cnx:
-                cursor = cnx.cursor(buffered=True)
+                with self.establish_connection(self.connection_params) as cnx:
+                    cursor = cnx.cursor(buffered=True)
 
-                # Executes query
-                cursor.execute("SHOW TABLES;")
+                    # Executes query
+                    cursor.execute("SHOW TABLES;")
 
-                # Saves the table's names
-                tables_names = [table[0] for table in cursor]
+                    # Saves the table's names
+                    tables_names = [table[0] for table in cursor]
 
-                # Empty dict with empty lists values
-                self.tables_columns = defaultdict(list)
+                    # Empty dict with empty lists values
+                    self.tables_columns = defaultdict(list)
 
-                # Loop to save the tables names and it's columns
-                for name in tables_names:
-                    
-                    # Query for each table's columns
-                    query = (
-                        """
-                        SELECT `COLUMN_NAME`
-                        FROM `INFORMATION_SCHEMA`.`COLUMNS`
-                        WHERE `TABLE_NAME` = %s;
-                        """
-                    )
+                    # Loop to save the tables names and it's columns
+                    for name in tables_names:
+                        
+                        # Query for each table's columns
+                        query = (
+                            """
+                            SELECT `COLUMN_NAME`
+                            FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                            WHERE `TABLE_NAME` = %s;
+                            """
+                        )
 
-                    # Executes the query
-                    cursor.execute(query, [name])
+                        # Executes the query
+                        cursor.execute(query, [name])
 
-                    # Obtains all the rows from the query
-                    columns = cursor.fetchall()
+                        # Obtains all the rows from the query
+                        columns = cursor.fetchall()
 
-                    # Dict with tables names and their columns
-                    self.tables_columns[name].extend(column[0] for column in columns)
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+                        # Dict with tables names and their columns
+                        self.tables_columns[name].extend(column[0] for column in columns)
 
-        # Tables Frame
-        self.tables = TablesFrame(self)
-        self.tables.grid(row=0, column=0, padx=20, pady=(0,20), sticky="nsew")
+            except mysql.connector.Error as err:
+                print(f"Error: {err}")
+        else:
+            self.destroy()
+            raise Exception("App was destroyed")
 
-        # Fields Frame
-        self.fields = EntryFrames(self, labels=self.get_columns(self.tables.selected_table))
-        self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
+            # Tables Frame
+            self.tables = TablesFrame(self)
+            self.tables.grid(row=0, column=0, padx=20, pady=(0,20), sticky="nsew")
 
-        # Buttons Frame
-        self.crud_buttons = CrudFrame(self)
-        self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
+            # Fields Frame
+            self.fields = EntryFrames(self, labels=self.get_columns(self.tables.selected_table))
+            self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
+
+            # Buttons Frame
+            self.crud_buttons = CrudFrame(self)
+            self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
 
     # Establish connection to MySQL Server (local)
     def establish_connection(self, params):
