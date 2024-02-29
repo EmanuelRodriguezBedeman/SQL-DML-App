@@ -142,13 +142,14 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
+        # Query to check if the DB is created, if not, it gets created
         self.db_query = db_query
 
         # Ask for Mysql's user & password until conection is successful
         while True:
-            
+            # Empty params dict
             self.connection_params = {}
-            
+
             # Input Dialogs
             self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
             if self.user == None:
@@ -158,6 +159,7 @@ class App(customtkinter.CTk):
             if self.password == None:
                 break
 
+            # Inputs are used as params
             self.connection_params = {
                 "user":self.user,
                 "password":self.password,
@@ -209,24 +211,27 @@ class App(customtkinter.CTk):
 
                         # Dict with tables names and their columns
                         self.tables_columns[name].extend(column[0] for column in columns)
+                        
+                        # Creates the app
+                        self.create_app()
 
             except mysql.connector.Error as err:
                 print(f"Error: {err}")
         else:
-            self.destroy()
-            raise Exception("App was destroyed")
+            quit()
 
-            # Tables Frame
-            self.tables = TablesFrame(self)
-            self.tables.grid(row=0, column=0, padx=20, pady=(0,20), sticky="nsew")
+    def create_app(self):
+        # Tables Frame
+        self.tables = TablesFrame(self)
+        self.tables.grid(row=0, column=0, padx=20, pady=(0,20), sticky="nsew")
 
-            # Fields Frame
-            self.fields = EntryFrames(self, labels=self.get_columns(self.tables.selected_table))
-            self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
+        # Fields Frame
+        self.fields = EntryFrames(self, labels=self.get_columns(self.tables.selected_table))
+        self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
-            # Buttons Frame
-            self.crud_buttons = CrudFrame(self)
-            self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
+        # Buttons Frame
+        self.crud_buttons = CrudFrame(self)
+        self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
 
     # Establish connection to MySQL Server (local)
     def establish_connection(self, params):
