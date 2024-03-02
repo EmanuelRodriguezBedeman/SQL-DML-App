@@ -3,7 +3,7 @@ import customtkinter # GUI
 from CTkMessagebox import CTkMessagebox # Messages Library
 import mysql.connector # MySQL
 from collections import defaultdict # Creates Dict
-from dunder_miflin_data import db_query
+from dunder_mifflin_data import db_query
 
 customtkinter.set_appearance_mode("system")  # default
 
@@ -147,17 +147,16 @@ class App(customtkinter.CTk):
 
         # Ask for Mysql's user & password until conection is successful
         while True:
-            # Empty params dict
-            self.connection_params = {}
-
-            # Input Dialogs
+            # --- Input Dialogs ---
+            # MySQL's user dialog
             self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
             if self.user == None:
-                break
+                quit()
 
+            # MySQL's password dialog
             self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
             if self.password == None:
-                break
+                quit()
 
             # Inputs are used as params
             self.connection_params = {
@@ -166,60 +165,79 @@ class App(customtkinter.CTk):
                 "host":'127.0.0.1'
             }
 
+            # If the connection success, the loop breaks
             try:
-                with self.establish_connection(self.connection_params) as cnx:
-                    break
-
-            except mysql.connector.Error as error:
-                print(f"Error: {error}")
-                CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
-
-        if self.connection_params:
-            # Block to get the tables names and their columns
-            try:
-                self.connection_params["database"] = 'girrafe'
-
                 with self.establish_connection(self.connection_params) as cnx:
                     cursor = cnx.cursor(buffered=True)
 
-                    # Executes query
-                    cursor.execute("SHOW TABLES;")
+                    cursor.execute("SHOW DATABASES LIKE 'dunder_mifflin'")
+                    db_exists = cursor.fetchall()
+                    print("fetched:", db_exists)
 
-                    # Saves the table's names
-                    tables_names = [table[0] for table in cursor]
-
-                    # Empty dict with empty lists values
-                    self.tables_columns = defaultdict(list)
-
-                    # Loop to save the tables names and it's columns
-                    for name in tables_names:
+                    if not db_exists:
+                        # Creates DB if it doesn't exist
+                        for query in self.db_query:
+                            cursor.execute(query)
+                            
+                        # Commits the transaction
+                        cnx.commit()
                         
-                        # Query for each table's columns
-                        query = (
-                            """
-                            SELECT `COLUMN_NAME`
-                            FROM `INFORMATION_SCHEMA`.`COLUMNS`
-                            WHERE `TABLE_NAME` = %s;
-                            """
-                        )
+                        print("DB Created successfully")
+                    else:
+                        print("DB already exists")
+                    
+                    break
 
-                        # Executes the query
-                        cursor.execute(query, [name])
+            except mysql.connector.Error as error:
+                print(f"MySQL Error: {error}")
+                CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
 
-                        # Obtains all the rows from the query
-                        columns = cursor.fetchall()
+        # Block to get the tables names and their columns
+        try:
+            self.connection_params["database"] = 'girrafe'
 
-                        # Dict with tables names and their columns
-                        self.tables_columns[name].extend(column[0] for column in columns)
-                        
-                        # Creates the app
-                        self.create_app()
+        # Opens DB connection
+            with self.establish_connection(self.connection_params) as cnx:
+                cursor = cnx.cursor(buffered=True)
 
-            except mysql.connector.Error as err:
-                print(f"Error: {err}")
-        else:
+                # Executes query
+                cursor.execute("SHOW TABLES;")
+
+                # Saves the table's names
+                tables_names = [table[0] for table in cursor]
+
+                # Empty dict with empty lists values
+                self.tables_columns = defaultdict(list)
+
+                # Loop to save the tables names and it's columns
+                for name in tables_names:
+                    
+                    # Query for each table's columns
+                    query = (
+                        """
+                        SELECT `COLUMN_NAME`
+                        FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                        WHERE `TABLE_NAME` = %s;
+                        """
+                    )
+
+                    # Executes the query
+                    cursor.execute(query, [name])
+
+                    # Obtains all the rows from the query
+                    columns = cursor.fetchall()
+
+                    # Dict with tables names and their columns
+                    self.tables_columns[name].extend(column[0] for column in columns)
+
+                # Creates the app
+                self.create_app()
+
+        except mysql.connector.Error as err:
+            print(f"MySQL Error: {err}")
             quit()
 
+    # Creates the App
     def create_app(self):
         # Tables Frame
         self.tables = TablesFrame(self)
