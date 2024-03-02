@@ -9,10 +9,10 @@
       "server": "localhost",
       "port": 3306,
       "driver": "MySQL",
-      "name": "Dunder Mifflin",
-      "database": "girrafe",
+      "name": "dunder mifflin",
+      "database": "dunder_mifflin",
       "username": "root",
-      "askForPassword": true
+      "password": "password"
     }
   ]
 }

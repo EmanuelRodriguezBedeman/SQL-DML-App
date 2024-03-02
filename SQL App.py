@@ -168,24 +168,11 @@ class App(customtkinter.CTk):
             # If the connection success, the loop breaks
             try:
                 with self.establish_connection(self.connection_params) as cnx:
-                    cursor = cnx.cursor(buffered=True)
+                    cursor = cnx.cursor()
 
                     cursor.execute("SHOW DATABASES LIKE 'dunder_mifflin'")
-                    db_exists = cursor.fetchall()
-                    print("fetched:", db_exists)
-
-                    if not db_exists:
-                        # Creates DB if it doesn't exist
-                        for query in self.db_query:
-                            cursor.execute(query)
-                            
-                        # Commits the transaction
-                        cnx.commit()
-                        
-                        print("DB Created successfully")
-                    else:
-                        print("DB already exists")
-                    
+                    self.db_exists = any(cursor.fetchall())
+                    print("fetched:", self.db_exists)
                     break
 
             except mysql.connector.Error as error:
@@ -194,7 +181,8 @@ class App(customtkinter.CTk):
 
         # Block to get the tables names and their columns
         try:
-            self.connection_params["database"] = 'girrafe'
+            self.create_db()
+            self.connection_params["database"] = 'dunder_mifflin'
 
         # Opens DB connection
             with self.establish_connection(self.connection_params) as cnx:
@@ -226,16 +214,45 @@ class App(customtkinter.CTk):
 
                     # Obtains all the rows from the query
                     columns = cursor.fetchall()
+                    
+                    print(f"*columns: {columns}\n")
 
                     # Dict with tables names and their columns
                     self.tables_columns[name].extend(column[0] for column in columns)
 
+                print("dictionary(tables and columns:)", self.tables_columns)
                 # Creates the app
                 self.create_app()
 
         except mysql.connector.Error as err:
             print(f"MySQL Error: {err}")
             quit()
+
+    # Creates DB
+    def create_db(self):
+        try:
+            with self.establish_connection(self.connection_params) as cnx:
+                cursor = cnx.cursor()
+
+                if not self.db_exists:
+                    # Creates DB if it doesn't exist
+                    for i, query in enumerate(self.db_query):
+                        print(i)
+                        if i <= 9:
+                            cursor.execute(query)
+                        else:
+                            cursor.executemany(query)
+
+                    # Commits the transaction
+                    cnx.commit()
+                    
+                    print("DB Created successfully")
+                else:
+                    print("DB already exists")
+
+        except mysql.connector.Error as error:
+            print(f"MySQL Error: {error}")
+            CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
 
     # Creates the App
     def create_app(self):

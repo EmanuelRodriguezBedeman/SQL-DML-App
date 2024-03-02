@@ -1,2 +1,2 @@
-SHOW DATABASES LIKE "dunder_mifflin";
+SHOW DATABASES;
 DROP DATABASE dunder_mifflin;
