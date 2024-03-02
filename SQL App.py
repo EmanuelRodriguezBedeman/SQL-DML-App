@@ -182,7 +182,6 @@ class App(customtkinter.CTk):
         # Block to get the tables names and their columns
         try:
             self.create_db()
-            self.connection_params["database"] = 'dunder_mifflin'
 
         # Opens DB connection
             with self.establish_connection(self.connection_params) as cnx:
@@ -214,13 +213,10 @@ class App(customtkinter.CTk):
 
                     # Obtains all the rows from the query
                     columns = cursor.fetchall()
-                    
-                    print(f"*columns: {columns}\n")
 
                     # Dict with tables names and their columns
                     self.tables_columns[name].extend(column[0] for column in columns)
 
-                print("dictionary(tables and columns:)", self.tables_columns)
                 # Creates the app
                 self.create_app()
 
@@ -230,6 +226,7 @@ class App(customtkinter.CTk):
 
     # Creates DB
     def create_db(self):
+        self.connection_params["database"] = 'dunder_mifflin'
         try:
             with self.establish_connection(self.connection_params) as cnx:
                 cursor = cnx.cursor()
