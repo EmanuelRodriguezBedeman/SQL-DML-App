@@ -1,2 +1,0 @@
-SHOW DATABASES;
-DROP DATABASE dunder_mifflin;
