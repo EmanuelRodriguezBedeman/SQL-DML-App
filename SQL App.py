@@ -3,7 +3,8 @@ import customtkinter # GUI
 from CTkMessagebox import CTkMessagebox # Messages Library
 import mysql.connector # MySQL
 from collections import defaultdict # Creates Dict
-from dunder_mifflin_data import db_query
+from dunder_mifflin_data import db_query # Query for DB
+import time
 
 customtkinter.set_appearance_mode("system")  # default
 
@@ -233,19 +234,21 @@ class App(customtkinter.CTk):
                 if not self.db_exists:
                     # Creates DB if it doesn't exist
                     for i, query in enumerate(self.db_query):
-                        print(i)
                         cursor.execute(query)
+                        print(i, cursor.fetchall())
+                        cnx.commit()
+                        cnx.free_result()
 
                     # Commits the transaction
-                    cnx.commit()
-                    
+                    # cnx.commit()
+
                     print("DB Created successfully")
                 else:
                     print("DB already exists")
                 self.connection_params["database"] = 'dunder_mifflin'
 
         except mysql.connector.Error as error:
-            print(f"MySQL Error: {error}")
+            print(f"MySQL DB Creation Error: {error}")
             CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
 
     # Creates the App
