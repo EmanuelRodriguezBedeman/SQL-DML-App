@@ -1,5 +1,4 @@
 *.sql
 *.ipynb
 *.txt
-__pycache__/
 /*

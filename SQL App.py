@@ -142,12 +142,12 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        # Query to check if the DB is created, if not, it gets created
+        # Queries to create DB
         self.db_query = db_query
 
         # Ask for Mysql's user & password until conection is successful
         while True:
-            # --- Input Dialogs ---
+
             # MySQL's user dialog
             self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
             if self.user == None:
@@ -165,7 +165,7 @@ class App(customtkinter.CTk):
                 "host":'127.0.0.1'
             }
 
-            # If the connection success, the loop breaks
+            # If it connects, checks for the DB and breaks loop
             try:
                 with self.establish_connection(self.connection_params) as cnx:
                     cursor = cnx.cursor()
@@ -226,7 +226,6 @@ class App(customtkinter.CTk):
 
     # Creates DB
     def create_db(self):
-        self.connection_params["database"] = 'dunder_mifflin'
         try:
             with self.establish_connection(self.connection_params) as cnx:
                 cursor = cnx.cursor()
@@ -235,10 +234,7 @@ class App(customtkinter.CTk):
                     # Creates DB if it doesn't exist
                     for i, query in enumerate(self.db_query):
                         print(i)
-                        if i <= 9:
-                            cursor.execute(query)
-                        else:
-                            cursor.executemany(query)
+                        cursor.execute(query)
 
                     # Commits the transaction
                     cnx.commit()
@@ -246,6 +242,7 @@ class App(customtkinter.CTk):
                     print("DB Created successfully")
                 else:
                     print("DB already exists")
+                self.connection_params["database"] = 'dunder_mifflin'
 
         except mysql.connector.Error as error:
             print(f"MySQL Error: {error}")
