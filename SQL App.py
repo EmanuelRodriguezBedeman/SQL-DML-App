@@ -79,7 +79,7 @@ class EntryFrames(customtkinter.CTkFrame):
                 entry.insert(0, text[index])
 
 # CRUD Buttons Frame
-class CrudFrame(customtkinter.CTkFrame):
+class DMLFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
@@ -262,8 +262,8 @@ class App(customtkinter.CTk):
         self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
         # Buttons Frame
-        self.crud_buttons = CrudFrame(self)
-        self.crud_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
+        self.dml_buttons = DMLFrame(self)
+        self.dml_buttons.grid(row=2, column=0, padx=20, pady=(0,20), sticky="nsew")
 
     # Establish connection to MySQL Server (local)
     def establish_connection(self, params):
