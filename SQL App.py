@@ -146,41 +146,15 @@ class App(customtkinter.CTk):
         # Queries to create DB
         self.db_query = db_query
 
-        # Ask for Mysql's user & password until conection is successful
-        while True:
+        # Ask for Mysql's user & password until connects
+        # then, checks if db exists. If not, creates it
+        self.credentials_and_db()
 
-            # MySQL's user dialog
-            self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
-            if self.user == None:
-                quit()
+        # Gets the tables names and their columns
+        self.db_tables_columns()
 
-            # MySQL's password dialog
-            self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
-            if self.password == None:
-                quit()
-
-            # Inputs are used as params
-            self.connection_params = {
-                "user":self.user,
-                "password":self.password,
-                "host":'127.0.0.1'
-            }
-
-            # If it connects, checks for the DB and breaks loop
-            try:
-                with self.establish_connection(self.connection_params) as cnx:
-                    cursor = cnx.cursor()
-
-                    cursor.execute("SHOW DATABASES LIKE 'dunder_mifflin'")
-                    self.db_exists = any(cursor.fetchall())
-                    print("fetched:", self.db_exists)
-                    break
-
-            except mysql.connector.Error as error:
-                print(f"MySQL Error: {error}")
-                CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
-
-        # Block to get the tables names and their columns
+    # Gets the tables names and their columns
+    def db_tables_columns(self):
         try:
             self.create_db()
 
@@ -224,6 +198,42 @@ class App(customtkinter.CTk):
         except mysql.connector.Error as err:
             print(f"MySQL Error: {err}")
             quit()
+
+    # Ask for Mysql's user & password until connects
+    # then, checks if db exists. If not, creates it
+    def credentials_and_db(self):
+        while True:
+
+            # MySQL's user dialog
+            self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
+            if self.user == None:
+                quit()
+
+            # MySQL's password dialog
+            self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
+            if self.password == None:
+                quit()
+
+            # Inputs are used as params
+            self.connection_params = {
+                "user":self.user,
+                "password":self.password,
+                "host":'127.0.0.1'
+            }
+
+            # If it connects, checks for the DB and breaks loop
+            try:
+                with self.establish_connection(self.connection_params) as cnx:
+                    cursor = cnx.cursor()
+
+                    cursor.execute("SHOW DATABASES LIKE 'dunder_mifflin'")
+                    self.db_exists = any(cursor.fetchall())
+                    print("fetched:", self.db_exists)
+                    break
+
+            except mysql.connector.Error as error:
+                print(f"MySQL Error: {error}")
+                CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
 
     # Creates DB
     def create_db(self):
