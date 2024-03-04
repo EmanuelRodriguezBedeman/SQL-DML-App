@@ -41,16 +41,16 @@ class TablesFrame(customtkinter.CTkFrame):
         optionmenu.grid(row=0, column=1, padx=20, pady=20)
 
 # Entries Frame
-class EntryFrames(customtkinter.CTkFrame):
-    def __init__(self, master, labels):
+class EntriesFrame(customtkinter.CTkFrame):
+    def __init__(self, master):
         super().__init__(master)
 
         # Labels & entries
-        self.labels = labels
+        self.labels = master.get_columns(master.tables.selected_table)
         self.entries = []
 
         # Creates table's columns labels & entries
-        for i, label in enumerate(labels):
+        for i, label in enumerate(self.labels):
             label = customtkinter.CTkLabel(self, text=label, fg_color="transparent")
             label.grid(row=i, column=0, padx=10, pady=10, sticky="w")
             entry = customtkinter.CTkEntry(self, width=180)
@@ -258,7 +258,7 @@ class App(customtkinter.CTk):
         self.tables.grid(row=0, column=0, padx=20, pady=(0,20), sticky="nsew")
 
         # Fields Frame
-        self.fields = EntryFrames(self, labels=self.get_columns(self.tables.selected_table))
+        self.fields = EntriesFrame(self)
         self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
         # Buttons Frame
@@ -275,7 +275,7 @@ class App(customtkinter.CTk):
         self.fields.destroy()
 
         # Creates a new EntryFrames with labels from the other table
-        self.fields = EntryFrames(self, labels=self.get_columns(table))
+        self.fields = EntriesFrame(self)
         self.fields.grid(row=1, column=0, padx=20, pady=(0,20), sticky="nsew")
 
     # Returns DB's tables based on index
