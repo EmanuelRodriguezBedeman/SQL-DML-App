@@ -151,7 +151,7 @@ class App(customtkinter.CTk):
         self.credentials_and_db()
 
         # Gets the tables names and their columns
-        self.db_tables_columns()
+        self.db_tables_and_columns()
 
     # Ask for Mysql's credentials until connects
     # Checks if db exists. If not, creates it.
@@ -193,7 +193,7 @@ class App(customtkinter.CTk):
                             cursor.execute(query)
                             cnx.commit()
 
-                    # Sets default params DB "dunder_mifflin"
+                    # Sets default DB "dunder_mifflin"
                     self.connection_params["database"] = 'dunder_mifflin'
                     break
 
@@ -202,7 +202,7 @@ class App(customtkinter.CTk):
                 CTkMessagebox(title="Error", message=f"ERROR!\n {error}", icon="cancel", option_1="Close")
 
     # Gets the tables names and their columns
-    def db_tables_columns(self):
+    def db_tables_and_columns(self):
         try:
             # self.create_db()
 
