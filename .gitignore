@@ -3,7 +3,6 @@
 *.ipynb
 *.txt
 /*
-.gitignore
 
 # Exceptions
 !dunder_mifflin_queries.*
