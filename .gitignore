@@ -1,4 +1,9 @@
+# Removes from tracking
 *.sql
 *.ipynb
 *.txt
 /*
+.gitignore
+
+# Exceptions
+!dunder_mifflin_queries.*

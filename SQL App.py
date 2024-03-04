@@ -4,7 +4,6 @@ from CTkMessagebox import CTkMessagebox # Messages Library
 import mysql.connector # MySQL
 from collections import defaultdict # Creates Dict
 from dunder_mifflin_data import db_query # Query for DB
-import time
 
 customtkinter.set_appearance_mode("system")  # default
 
@@ -138,7 +137,6 @@ class DMLFrame(customtkinter.CTkFrame):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        # customtkinter.set_default_color_theme("blue")
         self.title("SQL DML App")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
