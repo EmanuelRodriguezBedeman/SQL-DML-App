@@ -1,9 +1,10 @@
 # Imports
+import sys # Sys
 import customtkinter # GUI
 from CTkMessagebox import CTkMessagebox # Messages Library
 import mysql.connector # MySQL
-from collections import defaultdict # Creates Dict
-from dunder_mifflin_data import db_query # Query for DB
+from collections import defaultdict # Creates empty dict
+import dunder_mifflin_queries # DB queries
 
 customtkinter.set_appearance_mode("system")  # default
 
@@ -85,23 +86,9 @@ class DMLFrame(customtkinter.CTkFrame):
         # Buttons attributes
         self.texts = ["Insert", "Read", "Update", "Delete"]
 
-        # Message Window Default value
-        self.msg_window = None
-
-        # Create Message Window
-        def open_msg_window(self, text):
-            if self.msg_window is None or not self.msg_window.winfo_exists():
-                self.msg_window = MessageWindow(self, text=text)  # create window if its None or destroyed
-                self.msg_window.after(100, self.msg_window.lift)
-                self.msg_window.resizable(False, False)
-            else:
-                print("else")
-                self.msg_window.focus()  # if window exists focus it
-
         # Create button function
         def insert_entry():
             print(master.insert_entry())
-            # open_msg_window(self, text="Data Created!")
 
         # Read button function
         def read_entry():
@@ -110,12 +97,10 @@ class DMLFrame(customtkinter.CTkFrame):
         # Update button function
         def update_entry():
             print(master.update_entry())
-            # open_msg_window(self, text="Data Updated!")
 
         # Delete button function
         def delete_entry():
             print(master.delete_entry())
-            # open_msg_window(self, text="Data Deleted!")
 
         # Clear button function
         def clear_entries():
@@ -126,7 +111,7 @@ class DMLFrame(customtkinter.CTkFrame):
 
         # Creates DML buttons & their positions
         for i, (text, function) in enumerate(zip(self.texts, functions)):
-            button = customtkinter.CTkButton(self, width=0.5, text=text, command=function)
+            button = customtkinter.CTkButton(self, text=text, command=function)
             button.grid(row=0, column=i, padx=10, pady=10, sticky="ew")
 
         # Creates Clear Button
@@ -142,7 +127,7 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         # Queries to create DB
-        self.db_query = db_query
+        self.db_query = dunder_mifflin_queries.db_query
 
         # Ask for Mysql's user & password until connects
         # then, checks if db exists. If not, creates it
@@ -159,12 +144,12 @@ class App(customtkinter.CTk):
             # MySQL's user dialog
             self.user = Dialog(self, text="Enter user:", title="MySQL User").get_entry()
             if self.user == None:
-                quit()
+                sys.exit()
 
             # MySQL's password dialog
             self.password = Dialog(self, text="Enter password:", title="MySQL Password").get_entry()
             if self.password == None:
-                quit()
+                sys.exit()
 
             # Credentials are used for params
             self.connection_params = {
