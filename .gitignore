@@ -7,4 +7,5 @@
 
 # Exceptions
 !dunder_mifflin_queries.*
-!DML App.*
+!DML App.py
+!DML App.exe
