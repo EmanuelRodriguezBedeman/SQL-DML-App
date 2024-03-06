@@ -34,11 +34,11 @@ class TablesFrame(customtkinter.CTkFrame):
 
         # Choose table label & it's position
         label = customtkinter.CTkLabel(self, text="Choose table:", fg_color="transparent")
-        label.grid(row=0, column=0, padx=20, pady=20)
+        label.grid(row=0, column=0, padx=20, pady=20, sticky="we")
 
         # Dropdown to select table & it's position
         optionmenu = customtkinter.CTkOptionMenu(self, values=master.get_tables(""), command=selected_table)
-        optionmenu.grid(row=0, column=1, padx=20, pady=20)
+        optionmenu.grid(row=0, column=1, padx=20, pady=20, sticky="we")
 
 # Entries Frame
 class EntriesFrame(customtkinter.CTkFrame):
@@ -124,7 +124,7 @@ class App(customtkinter.CTk):
         super().__init__()
         self.title("SQL DML App")
         self.grid_columnconfigure(0, weight=1)
-        # self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
         # Queries to create DB
         self.db_query = dunder_mifflin_queries.db_query
