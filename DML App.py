@@ -111,8 +111,8 @@ class DMLFrame(customtkinter.CTkFrame):
 
         # Creates DML buttons & their positions
         for i, (text, function) in enumerate(zip(self.texts, functions)):
-            button = customtkinter.CTkButton(self, text=text, command=function)
-            button.grid(row=0, column=i, padx=10, pady=10, sticky="ew")
+            button = customtkinter.CTkButton(self, width=60, text=text, command=function)
+            button.grid(row=0, column=i, padx=10, pady=10)
 
         # Creates Clear Button
         clear_button = customtkinter.CTkButton(self, text="Clear Fields", command=clear_entries)
@@ -124,7 +124,7 @@ class App(customtkinter.CTk):
         super().__init__()
         self.title("SQL DML App")
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        # self.grid_rowconfigure(0, weight=1)
 
         # Queries to create DB
         self.db_query = dunder_mifflin_queries.db_query
