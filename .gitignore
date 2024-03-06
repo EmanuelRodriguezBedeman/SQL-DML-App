@@ -3,7 +3,8 @@
 *.ipynb
 *.txt
 /*
+*.spec
 
 # Exceptions
 !dunder_mifflin_queries.*
-!*.py
+!DML App.*
