@@ -14,3 +14,21 @@
 ![DM App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/9148bc5a-9545-4741-bdac-d6486a7ba771)
 
 </div>
+
+<h2>About</h2>
+<p>Desktop program, where you can do basic management to a MySQL Database just from the GUI, without the need of writing any query.</p>
+<p>As a concept model, by default, it'll search for a DB called: `dunder_mifflin`. If not found, it will be created.</p>
+
+<h2>Features</h2>
+<!-- <p>It performs SQL's <em>Data Management Language</em>:</p> -->
+<strong>
+    <ul>
+        <li>Insert</li>
+        <li>Read</li>
+        <li>Update</li>
+        <li>Delete</li>
+    </ul>
+</strong>
+
+> This commands are part of SQL's DML (*Data Management Language*)
+
