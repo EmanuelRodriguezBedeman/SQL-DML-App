@@ -4,12 +4,9 @@
 
 <div align="center">
 
-![Python Logo](https://img.shields.io/badge/%20---?style=social&logo=python&label=python)
-
-![Python Logo](https://img.shields.io/badge/%20---?style=social&logo=python&label=python)
-
-![CustomTkinter](https://img.shields.io/badge/_-blue?style=plastic&label=CustomTkinter&labelColor=blue)
-
+  ![Python](https://img.shields.io/badge/_-blue?style=plastic&logo=python&logoColor=white&label=Python&labelColor=blue)
+  ![MySQL](https://img.shields.io/badge/_-blue?style=plastic&logo=MySQL&logoColor=white&label=MySQL&labelColor=blue)
+  ![CustomTkinter](https://img.shields.io/badge/_-blue?style=plastic&label=CustomTkinter&labelColor=blue)
 </div>
 
 <div align="center"> 
