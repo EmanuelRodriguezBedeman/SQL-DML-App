@@ -1,6 +1,6 @@
 <h1 align="center">Data Management App</h1>
 
-<h3 align="center">Python's desktop App to do data management to SQL's databases.</h3>
+<h3 align="center">Python Desktop App for Efficient SQL Database Management</h3>
 
 <div align="center">
 
@@ -17,27 +17,30 @@
 </div>
 
 <h2>About</h2>
-<p>Desktop program, where you can do basic management to a MySQL Database just from the GUI, without the need of writing any query.</p>
-<p>As a concept model, by default, it'll search for a DB called: `dunder_mifflin`. If not found, it will be created.</p>
+<p>Introducing a user-friendly desktop application designed for hassle-free MySQL database management directly from the graphical user interface (GUI), eliminating the need for writing complex queries.</p>
+<p>As a concept model, it seamlessly searches for a default database named 'dunder_mifflin' and creates it if not found, offering a streamlined experience for beginners and professionals alike."</p>
 
 <h2>Features</h2>
 
 <ul>
-    <li>Connect to a DB using your MySQL credentials</li>
-    <li>Choose which table you want to manage</li>
-    <li>Make data management operations:</li>
+    <li>Connect to your MySQL database using your credentials.</li>
+    <li>Select and manage tables effortlessly.</li>
+    <li>Perform essential data management operations:</li>
     <ul>
-        <li>Insert</li>
-        <li>Read</li>
-        <li>Update</li>
-        <li>Delete</li>
+        <li>Insert new data.</li>
+        <li>Read existing data.</li>
+        <li>Update records.</li>
+        <li>Delete unwanted entries.</li>
     </ul>
 </ul>
 
-> This commands are part of SQL's DML (*Data Management Language*)
+> These commands are integral parts of SQL's DML (*Data Management Language*), enabling efficient data manipulation within your MySQL database.
+<div  align="center">
 
 <h2>Demo</h2>
 
 ![DML App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/125c63ef-b0c1-4439-becb-d10a921faec6)
 
+
+</div>
 <h3 align="center"><a href="https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/archive/refs/heads/main.zip" download="DM App">Download</a></h3>
