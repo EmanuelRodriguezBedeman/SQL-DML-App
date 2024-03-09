@@ -20,15 +20,23 @@
 <p>As a concept model, by default, it'll search for a DB called: `dunder_mifflin`. If not found, it will be created.</p>
 
 <h2>Features</h2>
-<!-- <p>It performs SQL's <em>Data Management Language</em>:</p> -->
-<strong>
+
+<ul>
+    <li>Connect to a DB using your MySQL credentials</li>
+    <li>Choose which table you want to manage</li>
+    <li>Make data management operations:</li>
     <ul>
         <li>Insert</li>
         <li>Read</li>
         <li>Update</li>
         <li>Delete</li>
     </ul>
-</strong>
+</ul>
 
 > This commands are part of SQL's DML (*Data Management Language*)
 
+<h2>Demo</h2>
+
+![DML App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/125c63ef-b0c1-4439-becb-d10a921faec6)
+
+<h2>Download</h2>
