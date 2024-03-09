@@ -40,4 +40,4 @@
 
 ![DML App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/125c63ef-b0c1-4439-becb-d10a921faec6)
 
-<h2 align="center"><a src="https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/archive/refs/heads/main.zip" href="_blank">Download</a></h2>
+<h3 align="center"><a href="https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/archive/refs/heads/main.zip" download="DM App">Download</a></h3>
