@@ -7,6 +7,7 @@
   ![Python](https://img.shields.io/badge/_-blue?style=plastic&logo=python&logoColor=white&label=Python&labelColor=blue)
   ![MySQL](https://img.shields.io/badge/_-blue?style=plastic&logo=MySQL&logoColor=white&label=MySQL&labelColor=blue)
   ![CustomTkinter](https://img.shields.io/badge/_-blue?style=plastic&label=CustomTkinter&labelColor=blue)
+
 </div>
 
 <div align="center"> 
@@ -39,11 +40,4 @@
 
 ![DML App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/125c63ef-b0c1-4439-becb-d10a921faec6)
 
-<h2>Download</h2>
-
-<ul>
-    <li>App only</li>
-    <li>Dunder Mifflin Database queries.sql</li>
-    <li>Dunder Mifflin Database queries.py</li>
-    <li>All files</li>
-</ul>
+<h2 align="center"><a src="https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/archive/refs/heads/main.zip" href="_blank">Download</a></h2>
