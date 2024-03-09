@@ -11,7 +11,7 @@
 
 <div align="center"> 
 
-![DM App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/9148bc5a-9545-4741-bdac-d6486a7ba771)
+![DM App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/882f9792-5b0e-43c3-8c15-ed92326e60e9)
 
 </div>
 
@@ -40,3 +40,10 @@
 ![DML App](https://github.com/EmanuelRodriguezBedeman/SQL-DML-App/assets/93904438/125c63ef-b0c1-4439-becb-d10a921faec6)
 
 <h2>Download</h2>
+
+<ul>
+    <li>App only</li>
+    <li>Dunder Mifflin Database queries.sql</li>
+    <li>Dunder Mifflin Database queries.py</li>
+    <li>All files</li>
+</ul>
